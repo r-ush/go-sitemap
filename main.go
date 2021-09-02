@@ -3,8 +3,11 @@ package main
 import (
 	"flag"
 	"fmt"
-	"github.com/r-ush/go-sitemap/link"
 	"net/http"
+	"net/url"
+	"strings"
+
+	"github.com/r-ush/go-sitemap/link"
 )
 
 /*
@@ -28,5 +31,31 @@ func main() {
 		panic(err)
 	}
 	defer resp.Body.Close()
-	links, _ = link.parse()
+
+	reqUrl := resp.Request.URL
+	baseUrl := &url.URL{
+		Scheme: reqUrl.Scheme,
+		Host:   reqUrl.Host,
+	}
+	base := baseUrl.String()
+
+	links, _ := link.Parse(resp.Body)
+
+	var hrefs []string
+	for _, l := range links {
+		switch {
+		case strings.HasPrefix(l.Href, "/"):
+			hrefs = append(hrefs, base+l.Href)
+		case strings.HasPrefix(l.Href, "http"):
+			hrefs = append(hrefs, l.Href)
+		default:
+			fmt.Println("skipping this--> ", l)
+		}
+	}
+
+	for _, href := range hrefs {
+		fmt.Println(href)
+
+	}
+
 }
