@@ -3,6 +3,7 @@ package main
 import (
 	"flag"
 	"fmt"
+	"github.com/r-ush/go-sitemap/link"
 	"net/http"
 )
 
@@ -27,5 +28,5 @@ func main() {
 		panic(err)
 	}
 	defer resp.Body.Close()
-	// links, _ = link.parse()
+	links, _ = link.parse()
 }

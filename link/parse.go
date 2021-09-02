@@ -1,7 +1,6 @@
-package main
+package link
 
 import (
-	"fmt"
 	"io"
 	"strings"
 
@@ -28,11 +27,11 @@ func Parse(r io.Reader) ([]Link, error) {
 	for _, node := range nodes {
 		links = append(links, buildLink(node))
 	}
-	// dfs(doc, "")
 
 	return links, nil
 }
 
+// builds the link struct from a tags
 func buildLink(n *html.Node) Link {
 	var ret Link
 
@@ -46,6 +45,7 @@ func buildLink(n *html.Node) Link {
 	return ret
 }
 
+// parses text of a tags
 func text(n *html.Node) string {
 	if n.Type == html.TextNode {
 		return n.Data
@@ -55,12 +55,13 @@ func text(n *html.Node) string {
 	}
 	var ret string
 	for c := n.FirstChild; c != nil; c = c.NextSibling {
-		ret += text(c) + " "
+		ret += text(c)
 	}
 	ret = strings.Join(strings.Fields(ret), " ")
 	return ret
 }
 
+// finds a tags from the document
 func linkNodes(n *html.Node) []*html.Node {
 	if n.Type == html.ElementNode && n.Data == "a" {
 		return []*html.Node{n}
@@ -73,32 +74,24 @@ func linkNodes(n *html.Node) []*html.Node {
 	return ret
 }
 
-// func dfs(n *html.Node, padding string) {
-// 	fmt.Println(padding, n.Data)
-
-// 	for c := n.FirstChild; c != nil; c = c.NextSibling {
-// 		dfs(c, padding+"  ")
-// 	}
-// }
-
 // testing
-var exampleHtml = `
-<html>
-<body>
-<h1>Hello!</h1>
-<a href="/other-page">A link to another page
-<span> some span  </span>
-</a>
-<a href="/page-two">A link to a second page</a>
-</body>
-</html>
-`
+// var exampleHtml = `
+// <html>
+// <body>
+// <h1>Hello!</h1>
+// <a href="/other-page">A link to another page
+// <span> some span  </span>
+// </a>
+// <a href="/page-two">A link to a second page</a>
+// </body>
+// </html>
+// `
 
-func main() {
-	r := strings.NewReader(exampleHtml)
-	links, err := Parse(r)
-	if err != nil {
-		panic(err)
-	}
-	fmt.Printf("%+v\n", links)
-}
+// func main() {
+// 	r := strings.NewReader(exampleHtml)
+// 	links, err := Parse(r)
+// 	if err != nil {
+// 		panic(err)
+// 	}
+// 	fmt.Printf("%+v\n", links)
+// }
