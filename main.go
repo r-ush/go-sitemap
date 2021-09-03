@@ -3,11 +3,10 @@ package main
 import (
 	"flag"
 	"fmt"
+	"go-sitemap/link"
 	"net/http"
 	"net/url"
 	"strings"
-
-	"github.com/r-ush/go-sitemap/link"
 )
 
 /*
