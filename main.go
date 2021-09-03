@@ -22,11 +22,12 @@ import (
 
 func main() {
 	urlFlag := flag.String("url", "https://blog.r-ush.co", "url to see the sitemap for")
+	maxDepth := flag.Int("depth", 3, "max links deep to traverse")
 
 	flag.Parse()
 	fmt.Println("searching for ---> ", *urlFlag)
 
-	pages := getPage(*urlFlag)
+	pages := bfs(*urlFlag, *maxDepth)
 
 	for _, page := range pages {
 		fmt.Println(page)
@@ -61,7 +62,7 @@ func hrefs(r io.Reader, base string) []string {
 		case strings.HasPrefix(l.Href, "http"):
 			ret = append(ret, l.Href)
 		default:
-			fmt.Println("skipping this--> ", l)
+			// fmt.Println("skipping this--> ", l)
 		}
 	}
 
@@ -83,4 +84,32 @@ func withPrefix(pfx string) func(string) bool {
 	return func(link string) bool {
 		return strings.HasPrefix(link, pfx)
 	}
+}
+
+func bfs(urlStr string, maxDepth int) []string {
+	seen := make(map[string]struct{})
+	var q map[string]struct{}
+	nq := map[string]struct{}{
+		urlStr: struct{}{},
+	}
+	for i := 0; i <= maxDepth; i++ {
+		q, nq = nq, make(map[string]struct{})
+		if len(q) == 0 {
+			break
+		}
+		for url, _ := range q {
+			if _, ok := seen[url]; ok {
+				continue
+			}
+			seen[url] = struct{}{}
+			for _, link := range getPage(url) {
+				nq[link] = struct{}{}
+			}
+		}
+	}
+	ret := make([]string, 0, len(seen))
+	for url, _ := range seen {
+		ret = append(ret, url)
+	}
+	return ret
 }
