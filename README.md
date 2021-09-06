@@ -1,6 +1,8 @@
-# Go Sitemap!
+![go-sitemap](assets/cover.png)
 
-![](assets/cover.png)
+[![GitHub License](https://img.shields.io/github/license/r-ush/go-sitemap)](https://github.com/r-ush/go-sitemap/blob/master/LICENSE)
+
+# go sitemap!
 
 > go-sitemap is a small cli to build XML sitemap for any website
 
